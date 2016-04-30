@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {{if .MarkdownTheme}}
+    <!-- Markdown Theme -->
+    <link rel="stylesheet" type="text/css" href="/assets/themes/{{.MarkdownTheme}}.css">
+    {{end}}
+
+    {{if .CodeTheme}}
+    <!-- Syntax Highlighting -->
+    <script type="text/javascript" src="/assets/highlight/highlight.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/highlight/styles/{{.CodeTheme}}.css">
+    <script type="text/javascript">
+        hljs.initHighlightingOnLoad();
+    </script>
+    {{end}}
+</head>
+<body>
+
+{{.Content}}
+
+</body>
+</html>

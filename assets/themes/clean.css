@@ -1,0 +1,108 @@
+@import url(https://fonts.googleapis.com/css?family=Merriweather|Merriweather+Sans:300,700|Source+Code+Pro:400,700);
+
+html {
+    color: #444;
+    font-family: 'Merriweather Sans', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+body {
+    width: 980px;
+    margin: 0 auto;
+}
+
+ @media (max-width: 1000px) {
+    body {
+        width: auto;
+        margin: 0 16px;
+    }
+ }
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+}
+
+h1, h2 {
+    font-family: 'Merriweather', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 700;
+    padding-bottom: 4px;
+    border-bottom:  4px solid #f2f2f2;
+    margin-bottom:  1em;
+}
+
+h2 {
+    padding-bottom: 1px;
+    border-bottom:  2px solid #f2f2f2;
+    margin-bottom:  2px;
+    margin-top: 2em;
+}
+
+h3, h4, h5, h6 {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+h4, h5, h6 {
+    font-size: 16px;
+}
+
+h5, h6 {
+    font-weight: 400;
+    text-decoration: underline;
+}
+
+p, ul, ol {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+
+p + ul, p + ol {
+    margin-top: -1em;
+}
+
+table {
+    overflow: auto;
+    margin-top: 0;
+    margin-bottom: 1em;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: 2px solid #f2f2f2;
+}
+
+h2 + table, h3 + table, h4 + table, h5 + table, h6 + table {
+    margin-top: 1em;
+}
+
+th, td {
+    border: 1px solid #f2f2f2;
+    padding: 6px 14px;
+}
+
+th {
+    font-weight: 700;
+    text-align: left;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+thead tr {
+    background-color: #f8f8f8;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fbfbfb;
+}
+
+code {
+    font-family: "Source Code Pro", "Menlo", "Inconsolata", "Courier New", "Courier"
+}
+
+blockquote {
+    border-left: 10px solid #f2f2f2;
+    background-color: #f8f8f8;
+    margin-left: 0;
+    padding: .5em 5% .5em 1em;
+}
