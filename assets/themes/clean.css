@@ -100,9 +100,20 @@ code {
     font-family: "Source Code Pro", "Menlo", "Inconsolata", "Courier New", "Courier"
 }
 
+pre code {
+    border-radius: 2px;
+    font-size: 13px;
+}
+
 blockquote {
     border-left: 10px solid #f2f2f2;
     background-color: #f8f8f8;
     margin-left: 0;
     padding: .5em 5% .5em 1em;
+}
+
+
+img {
+    max-width: 100%;
+    margin: 1em 0;
 }

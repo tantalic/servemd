@@ -93,3 +93,17 @@ th {
 tbody tr:nth-child(odd) {
     background-color: #fbfbfb;
 }
+
+code {
+    font-family: "Source Code Pro", "Menlo", "Inconsolata", "Courier New", "Courier"
+}
+
+pre code {
+    border-radius: 2px;
+    font-size: 13px;
+}
+
+img {
+    max-width: 100%;
+    margin: 1em 0;
+}
