@@ -13,10 +13,10 @@ import (
 )
 
 type Document struct {
-	Title         string
+	Title         string `fm:"title"`
+	Content       string `fm:"content"`
 	MarkdownTheme string
 	CodeTheme     string
-	Content       string `fm:"content"`
 }
 
 func markdownHandleFunc(c Config) httpHandleFunc {
