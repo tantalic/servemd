@@ -19,7 +19,7 @@ type Config struct {
 	Port int    `envconfig:"PORT" default:"3000"`
 
 	// Theme
-	MarkdownTheme string `envconfig:"MARKDOWN_THEME" default:""`
+	MarkdownTheme string `envconfig:"MARKDOWN_THEME" default:"clean"`
 	CodeTheme     string `envconfig:"CODE_THEME" default:""`
 }
 
