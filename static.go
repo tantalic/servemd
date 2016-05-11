@@ -2,6 +2,6 @@ package main
 
 import "net/http"
 
-func staticAssetHandler(c Config) http.Handler {
+func staticAssetHandler() http.Handler {
 	return http.StripPrefix("/assets", http.FileServer(assetFS()))
 }

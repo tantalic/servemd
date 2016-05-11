@@ -5,51 +5,104 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/kelseyhightower/envconfig"
+	"github.com/codegangsta/cli"
 )
 
-type Config struct {
-	// Content
-	DocRoot      string `envconfig:"DOCUMENT_ROOT" default:"."`
-	DocExtension string `envconfig:"DOCUMENT_EXTENSION" default:".md"`
-	DirIndex     string `envconfig:"DIRECTORY_INDEX" default:"index"`
-
-	// Server
-	Host string `envconfig:"HOST" default:""`
-	Port int    `envconfig:"PORT" default:"3000"`
-
-	// Theme
-	MarkdownTheme string `envconfig:"MARKDOWN_THEME" default:"clean"`
-	CodeTheme     string `envconfig:"CODE_THEME" default:""`
-}
+const (
+	Version = "0.3.0"
+)
 
 type httpHandleFunc func(w http.ResponseWriter, r *http.Request)
 
 func main() {
-	// Load cnfiguation (environment variables)
-	config, err := getConfig()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading configuration from environment (%s).\n", err)
-		os.Exit(1)
+
+	app := cli.NewApp()
+
+	// App Info
+	app.Name = "servemd"
+	app.Usage = "a simple http server for markdown content"
+	app.UsageText = app.Name + " [options]"
+	app.Version = Version
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "Kevin Stock",
+			Email: "kevinstock@tantalic.com",
+		},
 	}
 
-	// Static Asset Handler
-	http.Handle("/assets/", staticAssetHandler(config))
+	// CLI Flags
+	app.Flags = []cli.Flag{
+		// HTTP Server
+		cli.StringFlag{
+			Name:   "host",
+			Value:  "0.0.0.0",
+			Usage:  "the host/ip address to listen on for http",
+			EnvVar: "HOST",
+		},
+		cli.IntFlag{
+			Name:   "port",
+			Value:  3000,
+			Usage:  "the port to listen on for http",
+			EnvVar: "PORT",
+		},
 
-	// Markdown File Handler
-	http.HandleFunc("/", markdownHandleFunc(config))
+		// Content
+		cli.StringFlag{
+			Name:   "dir",
+			Value:  ".",
+			Usage:  "the content directory to serve",
+			EnvVar: "DOCUMENT_ROOT",
+		},
+		cli.StringFlag{
+			Name:   "extension",
+			Value:  ".md",
+			Usage:  "the extension used for markdown files",
+			EnvVar: "DOCUMENT_EXTENSION",
+		},
+		cli.StringFlag{
+			Name:   "index",
+			Value:  "index",
+			Usage:  "the filename (without extension) to use for directory index",
+			EnvVar: "DIRECTORY_INDEX",
+		},
 
-	// Start HTTP server
-	addr := fmt.Sprintf("%s:%d", config.Host, config.Port)
-	err = http.ListenAndServe(addr, nil)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error starting server (%s).\n", err)
-		os.Exit(1)
+		// Theme
+		cli.StringFlag{
+			Name:   "markdown-theme",
+			Value:  "clean",
+			Usage:  "the theme to use for styling markdown html",
+			EnvVar: "MARKDOWN_THEME",
+		},
+		cli.StringFlag{
+			Name:   "code-theme",
+			Usage:  "the highlight.js theme to use for syntax highlighting",
+			EnvVar: "CODE_THEME",
+		},
 	}
+
+	app.Action = start
+	app.Run(os.Args)
 }
 
-func getConfig() (Config, error) {
-	var c Config
-	err := envconfig.Process("MDSERVE", &c)
-	return c, err
+func start(c *cli.Context) error {
+	// Static Asset Handler
+	http.Handle("/assets/", staticAssetHandler())
+
+	// Markdown File Handler
+	http.HandleFunc("/", markdownHandleFunc(MarkdownHandlerOptions{
+		DocRoot:       c.String("dir"),
+		DocExtension:  c.String("extension"),
+		DirIndex:      c.String("index"),
+		MarkdownTheme: c.String("markdown-theme"),
+		CodeTheme:     c.String("code-theme"),
+	}))
+
+	// Start HTTP server
+	addr := fmt.Sprintf("%s:%d", c.String("host"), c.Int("port"))
+	err := http.ListenAndServe(addr, nil)
+	if err != nil {
+		return fmt.Errorf("Error starting server (%s).", err)
+	}
+
+	return nil
 }

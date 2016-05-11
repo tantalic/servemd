@@ -19,63 +19,71 @@ type Document struct {
 	CodeTheme     string
 }
 
-func markdownHandleFunc(c Config) httpHandleFunc {
+type MarkdownHandlerOptions struct {
+	DocRoot       string
+	DocExtension  string
+	DirIndex      string
+	MarkdownTheme string
+	CodeTheme     string
+}
+
+func markdownHandleFunc(opts MarkdownHandlerOptions) httpHandleFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		path, err := filepath.Abs(filepath.Join(c.DocRoot, r.URL.Path))
+		path, err := filepath.Abs(filepath.Join(opts.DocRoot, r.URL.Path))
 		if err != nil {
-			serveInternalError(w, r, c)
+			serveInternalError(w, r, opts)
 			fmt.Fprintf(os.Stderr, "Error finding absolute path (%s)", err)
 			return
 		}
 
 		info, err := os.Stat(path)
 		if os.IsNotExist(err) {
-			servePageNotFound(w, r, c)
+			servePageNotFound(w, r, opts)
 			return
 		}
 
 		if info.IsDir() {
-			serveDirectory(w, r, path, c)
+			serveDirectory(w, r, path, opts)
 			return
 		}
 
 		// Serve file
-		serveFile(w, r, path, c)
+		serveFile(w, r, path, opts)
 	}
 }
 
-func serveDirectory(w http.ResponseWriter, r *http.Request, path string, c Config) {
-	indexFile := filepath.Join(path, c.DirIndex+c.DocExtension)
-	serveFile(w, r, indexFile, c)
+func serveDirectory(w http.ResponseWriter, r *http.Request, path string, opts MarkdownHandlerOptions) {
+	indexFile := filepath.Join(path, opts.DirIndex+opts.DocExtension)
+	serveFile(w, r, indexFile, opts)
 }
 
-func serveFile(w http.ResponseWriter, r *http.Request, path string, c Config) {
+func serveFile(w http.ResponseWriter, r *http.Request, path string, opts MarkdownHandlerOptions) {
 	ext := filepath.Ext(path)
 
-	if ext == c.DocExtension {
-		serveMarkdown(w, r, path, c)
+	if ext == opts.DocExtension {
+		serveMarkdown(w, r, path, opts)
 	} else {
 		http.ServeFile(w, r, path)
 	}
 }
 
-func serveMarkdown(w http.ResponseWriter, r *http.Request, path string, c Config) {
+func serveMarkdown(w http.ResponseWriter, r *http.Request, path string, opts MarkdownHandlerOptions) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading file (%s).\n", err)
-		serveInternalError(w, r, c)
+		serveInternalError(w, r, opts)
 		return
 	}
 
 	doc := Document{
-		MarkdownTheme: c.MarkdownTheme,
-		CodeTheme:     c.CodeTheme,
+		MarkdownTheme: opts.MarkdownTheme,
+		CodeTheme:     opts.CodeTheme,
 	}
 
 	err = frontmatter.Unmarshal(data, &doc)
 	if err != nil {
-		serveInternalError(w, r, c)
+		serveInternalError(w, r, opts)
 		fmt.Fprintf(os.Stderr, "Error unmarshalling frontmatter (%s).\n", err)
 	}
 
@@ -97,22 +105,22 @@ func serveDocument(w http.ResponseWriter, r *http.Request, doc Document) {
 	t.Execute(w, doc)
 }
 
-func servePageNotFound(w http.ResponseWriter, r *http.Request, c Config) {
+func servePageNotFound(w http.ResponseWriter, r *http.Request, opts MarkdownHandlerOptions) {
 	w.WriteHeader(http.StatusNotFound)
 	doc := Document{
-		MarkdownTheme: c.MarkdownTheme,
-		CodeTheme:     c.CodeTheme,
+		MarkdownTheme: opts.MarkdownTheme,
+		CodeTheme:     opts.CodeTheme,
 		Title:         "Page Not Found",
 		Content:       "<h1>Page Not Found</h1>",
 	}
 	serveDocument(w, r, doc)
 }
 
-func serveInternalError(w http.ResponseWriter, r *http.Request, c Config) {
+func serveInternalError(w http.ResponseWriter, r *http.Request, opts MarkdownHandlerOptions) {
 	w.WriteHeader(http.StatusInternalServerError)
 	doc := Document{
-		MarkdownTheme: c.MarkdownTheme,
-		CodeTheme:     c.CodeTheme,
+		MarkdownTheme: opts.MarkdownTheme,
+		CodeTheme:     opts.CodeTheme,
 		Title:         "Invalid Request",
 		Content:       "<h1>Invalid Request</h1>",
 	}
