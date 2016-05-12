@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	Version = "0.3.0"
+	Version = "0.3.1"
 )
 
 type httpHandleFunc func(w http.ResponseWriter, r *http.Request)
