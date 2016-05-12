@@ -13,12 +13,12 @@ body {
     margin: 0 auto;
 }
 
- @media (max-width: 1000px) {
+@media (max-width: 1000px) {
     body {
         width: auto;
         margin: 0 16px;
     }
- }
+}
 
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
@@ -64,12 +64,18 @@ p + ul, p + ol {
 }
 
 table {
-    overflow: auto;
     margin-top: 0;
     margin-bottom: 1em;
     border-spacing: 0;
     border-collapse: collapse;
     border: 2px solid #f2f2f2;
+}
+
+@media (max-width: 1000px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
 }
 
 h2 + table, h3 + table, h4 + table, h5 + table, h6 + table {
@@ -103,6 +109,8 @@ code {
 pre code {
     border-radius: 2px;
     font-size: 13px;
+    display: block;
+    overflow-x: auto;
 }
 
 blockquote {
