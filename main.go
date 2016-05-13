@@ -86,16 +86,21 @@ func main() {
 
 func start(c *cli.Context) error {
 	// Static Asset Handler
-	http.Handle("/assets/", staticAssetHandler())
+	staticAssetHandler := staticAssetServer()
+	staticAssetHandlerFunc := func(w http.ResponseWriter, r *http.Request) {
+		staticAssetHandler.ServeHTTP(w, r)
+	}
+	http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
 
 	// Markdown File Handler
-	http.HandleFunc("/", markdownHandleFunc(MarkdownHandlerOptions{
+	markdownHandlerFunc := markdownHandleFunc(MarkdownHandlerOptions{
 		DocRoot:       c.String("dir"),
 		DocExtension:  c.String("extension"),
 		DirIndex:      c.String("index"),
 		MarkdownTheme: c.String("markdown-theme"),
 		CodeTheme:     c.String("code-theme"),
-	}))
+	})
+	http.HandleFunc("/", headerMiddleware(markdownHandlerFunc))
 
 	// Start HTTP server
 	addr := fmt.Sprintf("%s:%d", c.String("host"), c.Int("port"))
