@@ -5,109 +5,102 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/codegangsta/cli"
+	"github.com/jawher/mow.cli"
 )
 
 const (
-	Version = "0.3.2"
+	Version = "0.4.0"
 )
 
 type httpHandleFunc func(w http.ResponseWriter, r *http.Request)
 
 func main() {
+	app := cli.App("servemd", "a simple http server for markdown content")
+	app.Version("v version", Version)
+	app.Spec = "[OPTIONS] [DIR]"
 
-	app := cli.NewApp()
-
-	// App Info
-	app.Name = "servemd"
-	app.Usage = "a simple http server for markdown content"
-	app.UsageText = app.Name + " [options]"
-	app.Version = Version
-	app.Authors = []cli.Author{
-		cli.Author{
-			Name:  "Kevin Stock",
-			Email: "kevinstock@tantalic.com",
-		},
-	}
-
-	// CLI Flags
-	app.Flags = []cli.Flag{
-		// HTTP Server
-		cli.StringFlag{
-			Name:   "host",
-			Value:  "0.0.0.0",
-			Usage:  "the host/ip address to listen on for http",
+	var (
+		// HTTP Options
+		host = app.String(cli.StringOpt{
+			Name:   "a host",
+			Desc:   "Host/IP address to listen on for HTTP",
+			Value:  "",
 			EnvVar: "HOST",
-		},
-		cli.IntFlag{
-			Name:   "port",
+		})
+		port = app.Int(cli.IntOpt{
+			Name:   "p port",
+			Desc:   "TCP PORT to listen on for HTTP",
 			Value:  3000,
-			Usage:  "the port to listen on for http",
 			EnvVar: "PORT",
-		},
+		})
+		users = app.Strings(cli.StringsOpt{
+			Name:   "u auth",
+			Desc:   "Username and password for basic authentication in the form of user:pass",
+			EnvVar: "BASIC_AUTH",
+		})
 
 		// Content
-		cli.StringFlag{
-			Name:   "dir",
+		dir = app.String(cli.StringArg{
+			Name:   "DIR",
+			Desc:   "Directory to serve content from",
 			Value:  ".",
-			Usage:  "the content directory to serve",
 			EnvVar: "DOCUMENT_ROOT",
-		},
-		cli.StringFlag{
-			Name:   "extension",
+		})
+		extension = app.String(cli.StringOpt{
+			Name:   "e extension",
+			Desc:   "Extension used for markdown files",
 			Value:  ".md",
-			Usage:  "the extension used for markdown files",
 			EnvVar: "DOCUMENT_EXTENSION",
-		},
-		cli.StringFlag{
-			Name:   "index",
+		})
+		index = app.String(cli.StringOpt{
+			Name:   "i index",
+			Desc:   "Filename (without extension) to use for directory index",
 			Value:  "index",
-			Usage:  "the filename (without extension) to use for directory index",
 			EnvVar: "DIRECTORY_INDEX",
-		},
+		})
 
 		// Theme
-		cli.StringFlag{
-			Name:   "markdown-theme",
+		markdownTheme = app.String(cli.StringOpt{
+			Name:   "m markdown-theme",
+			Desc:   "Theme to use for styling markdown html",
 			Value:  "clean",
-			Usage:  "the theme to use for styling markdown html",
 			EnvVar: "MARKDOWN_THEME",
-		},
-		cli.StringFlag{
-			Name:   "code-theme",
-			Usage:  "the highlight.js theme to use for syntax highlighting",
+		})
+		codeTheme = app.String(cli.StringOpt{
+			Name:   "c code-theme",
+			Desc:   "Highlight.js theme to use for syntax highlighting",
+			Value:  "",
 			EnvVar: "CODE_THEME",
-		},
+		})
+	)
+
+	app.Action = func() {
+		// Static Asset Handler
+		staticAssetHandler := staticAssetServer()
+		staticAssetHandlerFunc := func(w http.ResponseWriter, r *http.Request) {
+			staticAssetHandler.ServeHTTP(w, r)
+		}
+		http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
+
+		// Markdown File Handler
+		markdownHandlerFunc := markdownHandleFunc(MarkdownHandlerOptions{
+			DocRoot:       *dir,
+			DocExtension:  *extension,
+			DirIndex:      *index,
+			MarkdownTheme: *markdownTheme,
+			CodeTheme:     *codeTheme,
+		})
+		http.HandleFunc("/", basicAuthMiddleware(headerMiddleware(markdownHandlerFunc), *users))
+
+		// Start HTTP server
+		addr := fmt.Sprintf("%s:%d", *host, *port)
+		err := http.ListenAndServe(addr, nil)
+		if err != nil {
+			fmt.Fprint(os.Stderr, "Error starting server (%s).", err)
+			cli.Exit(1)
+		}
+
 	}
 
-	app.Action = start
 	app.Run(os.Args)
-}
-
-func start(c *cli.Context) error {
-	// Static Asset Handler
-	staticAssetHandler := staticAssetServer()
-	staticAssetHandlerFunc := func(w http.ResponseWriter, r *http.Request) {
-		staticAssetHandler.ServeHTTP(w, r)
-	}
-	http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
-
-	// Markdown File Handler
-	markdownHandlerFunc := markdownHandleFunc(MarkdownHandlerOptions{
-		DocRoot:       c.String("dir"),
-		DocExtension:  c.String("extension"),
-		DirIndex:      c.String("index"),
-		MarkdownTheme: c.String("markdown-theme"),
-		CodeTheme:     c.String("code-theme"),
-	})
-	http.HandleFunc("/", headerMiddleware(markdownHandlerFunc))
-
-	// Start HTTP server
-	addr := fmt.Sprintf("%s:%d", c.String("host"), c.Int("port"))
-	err := http.ListenAndServe(addr, nil)
-	if err != nil {
-		return fmt.Errorf("Error starting server (%s).", err)
-	}
-
-	return nil
 }
