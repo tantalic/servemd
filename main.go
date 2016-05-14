@@ -33,6 +33,11 @@ func main() {
 			Value:  3000,
 			EnvVar: "PORT",
 		})
+		users = app.Strings(cli.StringsOpt{
+			Name:   "u auth",
+			Desc:   "Username and password for basic authentication in the form of user:pass",
+			EnvVar: "BASIC_AUTH",
+		})
 
 		// Content
 		dir = app.String(cli.StringArg{
@@ -85,7 +90,7 @@ func main() {
 			MarkdownTheme: *markdownTheme,
 			CodeTheme:     *codeTheme,
 		})
-		http.HandleFunc("/", headerMiddleware(markdownHandlerFunc))
+		http.HandleFunc("/", basicAuthMiddleware(headerMiddleware(markdownHandlerFunc), *users))
 
 		// Start HTTP server
 		addr := fmt.Sprintf("%s:%d", *host, *port)
