@@ -41,9 +41,9 @@ Usage: `servemd [OPTIONS] [DIR]`
 
 ### Arguments
 
-| Environment Variable | Argument |           Description            |     | Default Value |
-|----------------------|----------|----------------------------------|-----|---------------|
-| `DOCUMENT_ROOT`      | `[DIR]`  | Directory to serve content from. | `.` |               |
+| Environment Variable | Argument |           Description            | Default Value |
+|----------------------|----------|----------------------------------|---------------|
+| `DOCUMENT_ROOT`      | `[DIR]`  | Directory to serve content from. | `.`           |
 
 ### Flags
 
