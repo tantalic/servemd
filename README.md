@@ -29,7 +29,7 @@ brew install servemd
 
 ### Docker
 
-The docker image can be pulled from Docker Hub:
+The [tantalic/servemd][dockerhub] image can be pulled from Docker Hub:
 
 ```shell
 docker pull tantalic/servemd
@@ -60,7 +60,7 @@ Usage: `servemd [OPTIONS] [DIR]`
 
 ## Deploying with Docker 
 
-The `tantalic/servemd` docker image can be used as a base for deployment. To create an image simply add your content to `/app/content` and configure via environment variables in your `Dockerfile`:
+The [tantalic/servemd][dockerhub] image can be used as a base for deployment. To create an image simply add your content to `/app/content` and configure via environment variables in your `Dockerfile`:
 
 ```Dockerfile
 FROM tantalic/servemd:latest
@@ -77,5 +77,6 @@ ADD content /app/content
 [release]: https://github.com/tantalic/servemd/releases/latest
 [homebrew]: http://brew.sh
 [highlightjs]: http://highlightjs.org
+[dockerhub]: https://hub.docker.com/r/tantalic/servemd/
 
 
