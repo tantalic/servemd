@@ -9,6 +9,12 @@
     <link rel="stylesheet" type="text/css" href="{{.MarkdownTheme}}">
     {{end}}
 
+    {{if .TypekitKitID}}
+    <!-- Typekit -->
+    <script src="https://use.typekit.net/{{.TypekitKitID}}.js"></script>
+    <script>try{Typekit.load({ async: true });}catch(e){}</script>
+    {{end}}
+
     {{if .CodeTheme}}
     <!-- Syntax Highlighting -->
     <script type="text/javascript" src="/assets/highlight/highlight.pack.js"></script>

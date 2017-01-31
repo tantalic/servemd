@@ -16,6 +16,7 @@ type Document struct {
 	Title         string `fm:"title"`
 	Content       string `fm:"content"`
 	MarkdownTheme string
+	TypekitKitID  string
 	CodeTheme     string
 }
 
@@ -24,6 +25,7 @@ type MarkdownHandlerOptions struct {
 	DocExtension  string
 	DirIndex      string
 	MarkdownTheme string
+	TypekitKitID  string
 	CodeTheme     string
 }
 
@@ -78,6 +80,7 @@ func serveMarkdown(w http.ResponseWriter, r *http.Request, path string, opts Mar
 
 	doc := Document{
 		MarkdownTheme: opts.MarkdownTheme,
+		TypekitKitID:  opts.TypekitKitID,
 		CodeTheme:     opts.CodeTheme,
 	}
 

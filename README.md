@@ -56,6 +56,7 @@ Usage: `servemd [OPTIONS] [DIR]`
 | `DOCUMENT_EXTENSION` | `-e, --extension`      | Extension used for markdown files                                                             | `.md`         |
 | `DIRECTORY_INDEX`    | `-i, --index`          | Filename (without extension) to use for directory indexes                                     | `index`       |
 | `MARKDOWN_THEME`     | `-m, --markdown-theme` | Theme to use for styling markdown. Can be one of the following built-in themes: *clean*, *github*, *developer* or the path to a custom CSS file to include. | `clean`       |
+| `TYPEKIT_KIT_ID`     | `-t, --typekit-kit-id` | Kit ID to include webfonts from the Typekit service. For use alongside a custom markdown theme.               |
 | `CODE_THEME`         | `-c, --code-theme`     | Syntax highlighting theme (powered by [highlight.js][highlightjs])                            | None          |
 
 

@@ -71,6 +71,12 @@ func main() {
 			Value:  DefaultTheme,
 			EnvVar: "MARKDOWN_THEME",
 		})
+		typekitKitID = app.String(cli.StringOpt{
+			Name:   "t typekit-kit-id",
+			Desc:   "ID of webfont kit to include from typekit",
+			Value:  DefaultTheme,
+			EnvVar: "TYPEKIT_KIT_ID",
+		})
 		codeTheme = app.String(cli.StringOpt{
 			Name:   "c code-theme",
 			Desc:   "Highlight.js theme to use for syntax highlighting",
@@ -99,6 +105,7 @@ func main() {
 			DocExtension:  *extension,
 			DirIndex:      *index,
 			MarkdownTheme: themePath,
+			TypekitKitID:  *typekitKitID,
 			CodeTheme:     *codeTheme,
 		})
 		markdownHandlerFunc = headerMiddleware(markdownHandlerFunc)
