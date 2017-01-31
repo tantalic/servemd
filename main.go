@@ -9,10 +9,9 @@ import (
 )
 
 const (
-	Version = "0.4.0"
+	Version      = "0.5.0"
+	DefaultTheme = "clean"
 )
-
-type httpHandleFunc func(w http.ResponseWriter, r *http.Request)
 
 func main() {
 	app := cli.App("servemd", "a simple http server for markdown content")
@@ -37,6 +36,12 @@ func main() {
 			Name:   "u auth",
 			Desc:   "Username and password for basic authentication in the form of user:pass",
 			EnvVar: "BASIC_AUTH",
+		})
+		robotsTag = app.String(cli.StringOpt{
+			Name:   "r x-robots-tag",
+			Desc:   "Sets a X-Robots-Tag header",
+			EnvVar: "X_ROBOTS_TAG",
+			Value:  "",
 		})
 
 		// Content
@@ -63,7 +68,7 @@ func main() {
 		markdownTheme = app.String(cli.StringOpt{
 			Name:   "m markdown-theme",
 			Desc:   "Theme to use for styling markdown html",
-			Value:  "clean",
+			Value:  DefaultTheme,
 			EnvVar: "MARKDOWN_THEME",
 		})
 		codeTheme = app.String(cli.StringOpt{
@@ -82,15 +87,24 @@ func main() {
 		}
 		http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
 
+		// Setup the markdown theme (may be custom or bundled)
+		themePath, themeHandler := theme(*markdownTheme)
+		if themeHandler != nil {
+			http.HandleFunc(themePath, themeHandler)
+		}
+
 		// Markdown File Handler
 		markdownHandlerFunc := markdownHandleFunc(MarkdownHandlerOptions{
 			DocRoot:       *dir,
 			DocExtension:  *extension,
 			DirIndex:      *index,
-			MarkdownTheme: *markdownTheme,
+			MarkdownTheme: themePath,
 			CodeTheme:     *codeTheme,
 		})
-		http.HandleFunc("/", basicAuthMiddleware(headerMiddleware(markdownHandlerFunc), *users))
+		markdownHandlerFunc = headerMiddleware(markdownHandlerFunc)
+		markdownHandlerFunc = basicAuthMiddleware(markdownHandlerFunc, *users)
+		markdownHandlerFunc = robotsTagMiddleware(markdownHandlerFunc, *robotsTag)
+		http.HandleFunc("/", markdownHandlerFunc)
 
 		// Start HTTP server
 		addr := fmt.Sprintf("%s:%d", *host, *port)

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func headerMiddleware(handler httpHandleFunc) httpHandleFunc {
+func headerMiddleware(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Powered-By", "github.com/tantalic/servemd")
 		w.Header().Set("X-Servemd-Version", Version)
@@ -13,7 +13,7 @@ func headerMiddleware(handler httpHandleFunc) httpHandleFunc {
 	}
 }
 
-func basicAuthMiddleware(handler httpHandleFunc, users []string) httpHandleFunc {
+func basicAuthMiddleware(handler http.HandlerFunc, users []string) http.HandlerFunc {
 	// If no users are defined don't add the middleware
 	if len(users) == 0 {
 		return handler
@@ -36,5 +36,17 @@ func basicAuthMiddleware(handler httpHandleFunc, users []string) httpHandleFunc 
 	unauthorized:
 		w.Header().Set("WWW-Authenticate", `Basic realm="Protected Content"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	}
+}
+
+func robotsTagMiddleware(handler http.HandlerFunc, value string) http.HandlerFunc {
+	// If the value is an empty string don't add the middleware
+	if value == "" {
+		return handler
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Robots-Tag", value)
+		handler(w, r)
 	}
 }
