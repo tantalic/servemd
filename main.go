@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"log"
+
 	"github.com/jawher/mow.cli"
 )
 
@@ -115,9 +117,10 @@ func main() {
 
 		// Start HTTP server
 		addr := fmt.Sprintf("%s:%d", *host, *port)
+		log.Printf("Starting server on %s", addr)
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error starting server (%s).", err)
+			log.Printf("Error starting server: %s", err)
 			cli.Exit(1)
 		}
 
