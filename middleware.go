@@ -38,3 +38,15 @@ func basicAuthMiddleware(handler http.HandlerFunc, users []string) http.HandlerF
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
 }
+
+func robotsTagMiddleware(handler http.HandlerFunc, value string) http.HandlerFunc {
+	// If the value is an empty string don't add the middleware
+	if value == "" {
+		return handler
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Robots-Tag", value)
+		handler(w, r)
+	}
+}

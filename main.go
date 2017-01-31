@@ -36,6 +36,12 @@ func main() {
 			Desc:   "Username and password for basic authentication in the form of user:pass",
 			EnvVar: "BASIC_AUTH",
 		})
+		robotsTag = app.String(cli.StringOpt{
+			Name:   "r x-robots-tag",
+			Desc:   "Sets a X-Robots-Tag header",
+			EnvVar: "X_ROBOTS_TAG",
+			Value:  "",
+		})
 
 		// Content
 		dir = app.String(cli.StringArg{
@@ -88,7 +94,10 @@ func main() {
 			MarkdownTheme: *markdownTheme,
 			CodeTheme:     *codeTheme,
 		})
-		http.HandleFunc("/", basicAuthMiddleware(headerMiddleware(markdownHandlerFunc), *users))
+		markdownHandlerFunc = headerMiddleware(markdownHandlerFunc)
+		markdownHandlerFunc = basicAuthMiddleware(markdownHandlerFunc, *users)
+		markdownHandlerFunc = robotsTagMiddleware(markdownHandlerFunc, *robotsTag)
+		http.HandleFunc("/", markdownHandlerFunc)
 
 		// Start HTTP server
 		addr := fmt.Sprintf("%s:%d", *host, *port)
