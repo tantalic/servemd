@@ -12,8 +12,6 @@ const (
 	Version = "0.4.0"
 )
 
-type httpHandleFunc func(w http.ResponseWriter, r *http.Request)
-
 func main() {
 	app := cli.App("servemd", "a simple http server for markdown content")
 	app.Version("v version", Version)

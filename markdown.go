@@ -27,7 +27,7 @@ type MarkdownHandlerOptions struct {
 	CodeTheme     string
 }
 
-func markdownHandleFunc(opts MarkdownHandlerOptions) httpHandleFunc {
+func markdownHandleFunc(opts MarkdownHandlerOptions) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		path, err := filepath.Abs(filepath.Join(opts.DocRoot, r.URL.Path))
