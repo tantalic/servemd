@@ -47,17 +47,17 @@ Usage: `servemd [OPTIONS] [DIR]`
 
 ### Flags
 
-| Environment Variable |          Flag          |                                          Description                                          | Default Value |
-|----------------------|------------------------|-----------------------------------------------------------------------------------------------|---------------|
-| `HOST`               | `-a, --host`           | Host/IP address to listen on                                                                  | All addresses |
-| `PORT`               | `-p, --port`           | TCP port to listen on                                                                         | `3000`        |
-| `BASIC_AUTH`         | `-u, --auth`           | Username and password for HTTP basic authentication. In the form of `user1:pass1,user2:pass2` | None          |
-| `X_ROBOTS_TAG`       | `-r --x-robots-tag`    | Sets a `X-Robots-Tag` header. Example: `"noindex, nofollow"`                                  | None          |
-| `DOCUMENT_EXTENSION` | `-e, --extension`      | Extension used for markdown files                                                             | `.md`         |
-| `DIRECTORY_INDEX`    | `-i, --index`          | Filename (without extension) to use for directory indexes                                     | `index`       |
+| Environment Variable |          Flag          |                                                                         Description                                                                         | Default Value |
+|----------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `HOST`               | `-a, --host`           | Host/IP address to listen on                                                                                                                                | All addresses |
+| `PORT`               | `-p, --port`           | TCP port to listen on                                                                                                                                       | `3000`        |
+| `BASIC_AUTH`         | `-u, --auth`           | Username and password for HTTP basic authentication. In the form of `user1:pass1,user2:pass2`                                                               | None          |
+| `X_ROBOTS_TAG`       | `-r --x-robots-tag`    | Sets a `X-Robots-Tag` header. Example: `"noindex, nofollow"`                                                                                                | None          |
+| `DOCUMENT_EXTENSION` | `-e, --extension`      | Extension used for markdown files                                                                                                                           | `.md`         |
+| `DIRECTORY_INDEX`    | `-i, --index`          | Filename (without extension) to use for directory indexes                                                                                                   | `index`       |
 | `MARKDOWN_THEME`     | `-m, --markdown-theme` | Theme to use for styling markdown. Can be one of the following built-in themes: *clean*, *github*, *developer* or the path to a custom CSS file to include. | `clean`       |
-| `TYPEKIT_KIT_ID`     | `-t, --typekit-kit-id` | Kit ID to include webfonts from the Typekit service. For use alongside a custom markdown theme.               |
-| `CODE_THEME`         | `-c, --code-theme`     | Syntax highlighting theme (powered by [highlight.js][highlightjs])                            | None          |
+| `TYPEKIT_KIT_ID`     | `-t, --typekit-kit-id` | Kit ID to include webfonts from the Typekit service. For use alongside a custom markdown theme.                                                             |               |
+| `CODE_THEME`         | `-c, --code-theme`     | Syntax highlighting theme (powered by [highlight.js][highlightjs])                                                                                          | None          |
 
 
 ## Deploying with Docker 
