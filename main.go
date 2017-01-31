@@ -117,7 +117,7 @@ func main() {
 		addr := fmt.Sprintf("%s:%d", *host, *port)
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
-			fmt.Fprint(os.Stderr, "Error starting server (%s).", err)
+			fmt.Fprintf(os.Stderr, "Error starting server (%s).", err)
 			cli.Exit(1)
 		}
 
