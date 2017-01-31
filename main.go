@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	Version = "0.4.0"
+	Version      = "0.4.0"
+	DefaultTheme = "clean"
 )
 
 func main() {
@@ -67,7 +68,7 @@ func main() {
 		markdownTheme = app.String(cli.StringOpt{
 			Name:   "m markdown-theme",
 			Desc:   "Theme to use for styling markdown html",
-			Value:  "clean",
+			Value:  DefaultTheme,
 			EnvVar: "MARKDOWN_THEME",
 		})
 		codeTheme = app.String(cli.StringOpt{
@@ -86,12 +87,18 @@ func main() {
 		}
 		http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
 
+		// Setup the markdown theme (may be custom or bundled)
+		themePath, themeHandler := theme(*markdownTheme)
+		if themeHandler != nil {
+			http.HandleFunc(themePath, themeHandler)
+		}
+
 		// Markdown File Handler
 		markdownHandlerFunc := markdownHandleFunc(MarkdownHandlerOptions{
 			DocRoot:       *dir,
 			DocExtension:  *extension,
 			DirIndex:      *index,
-			MarkdownTheme: *markdownTheme,
+			MarkdownTheme: themePath,
 			CodeTheme:     *codeTheme,
 		})
 		markdownHandlerFunc = headerMiddleware(markdownHandlerFunc)
