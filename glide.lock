@@ -1,0 +1,16 @@
+hash: 598cfaa1c94305d6c2984c69c65abe1a74a8887248585c85a2c38b606e9f9062
+updated: 2017-01-31T16:10:14.968301695-08:00
+imports:
+- name: github.com/elazarl/go-bindata-assetfs
+  version: 9a6736ed45b44bf3835afeebb3034b57ed329f3e
+- name: github.com/ericaro/frontmatter
+  version: 9fedef9406e420da012d078cd83645bbac08f291
+- name: github.com/jawher/mow.cli
+  version: 0de3d3b4ed00f261460d12ecde4efa90fbfcd8ed
+- name: github.com/russross/blackfriday
+  version: 0b647d0506a698cca42caca173e55559b12a69f2
+- name: github.com/shurcooL/sanitized_anchor_name
+  version: 1dba4b3954bc059efc3991ec364f9f9a35f597d2
+- name: gopkg.in/yaml.v2
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+testImports: []
