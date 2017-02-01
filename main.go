@@ -93,11 +93,17 @@ func main() {
 		staticAssetHandlerFunc := func(w http.ResponseWriter, r *http.Request) {
 			staticAssetHandler.ServeHTTP(w, r)
 		}
-		http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
+		staticAssetHandlerFunc = headerMiddleware(staticAssetHandlerFunc)
+		staticAssetHandlerFunc = basicAuthMiddleware(staticAssetHandlerFunc, *users)
+		staticAssetHandlerFunc = robotsTagMiddleware(staticAssetHandlerFunc, *robotsTag)
+		http.HandleFunc("/assets/", staticAssetHandlerFunc)
 
 		// Setup the markdown theme (may be custom or bundled)
 		themePath, themeHandler := theme(*markdownTheme)
 		if themeHandler != nil {
+			themeHandler = headerMiddleware(themeHandler)
+			themeHandler = basicAuthMiddleware(themeHandler, *users)
+			themeHandler = robotsTagMiddleware(themeHandler, *robotsTag)
 			http.HandleFunc(themePath, themeHandler)
 		}
 
