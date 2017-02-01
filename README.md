@@ -71,7 +71,7 @@ MAINTAINER Your Name <email@example.com>
 ENV MARKDOWN_THEME developer
 ENV CODE_THEME solarized-dark
 
-ADD content /app/content
+ADD content /content
 ```
 
 
