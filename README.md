@@ -80,5 +80,3 @@ ADD content /content
 [homebrew]: http://brew.sh
 [highlightjs]: http://highlightjs.org
 [dockerhub]: https://hub.docker.com/r/tantalic/servemd/
-
-
