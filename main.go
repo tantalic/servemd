@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"os"
 
+	"log"
+
 	"github.com/jawher/mow.cli"
 )
 
 const (
-	Version      = "0.5.0"
+	Version      = "0.6.0"
 	DefaultTheme = "clean"
 )
 
@@ -71,6 +73,12 @@ func main() {
 			Value:  DefaultTheme,
 			EnvVar: "MARKDOWN_THEME",
 		})
+		typekitKitID = app.String(cli.StringOpt{
+			Name:   "t typekit-kit-id",
+			Desc:   "ID of webfont kit to include from typekit",
+			Value:  DefaultTheme,
+			EnvVar: "TYPEKIT_KIT_ID",
+		})
 		codeTheme = app.String(cli.StringOpt{
 			Name:   "c code-theme",
 			Desc:   "Highlight.js theme to use for syntax highlighting",
@@ -85,11 +93,17 @@ func main() {
 		staticAssetHandlerFunc := func(w http.ResponseWriter, r *http.Request) {
 			staticAssetHandler.ServeHTTP(w, r)
 		}
-		http.HandleFunc("/assets/", headerMiddleware(staticAssetHandlerFunc))
+		staticAssetHandlerFunc = headerMiddleware(staticAssetHandlerFunc)
+		staticAssetHandlerFunc = basicAuthMiddleware(staticAssetHandlerFunc, *users)
+		staticAssetHandlerFunc = robotsTagMiddleware(staticAssetHandlerFunc, *robotsTag)
+		http.HandleFunc("/assets/", staticAssetHandlerFunc)
 
 		// Setup the markdown theme (may be custom or bundled)
 		themePath, themeHandler := theme(*markdownTheme)
 		if themeHandler != nil {
+			themeHandler = headerMiddleware(themeHandler)
+			themeHandler = basicAuthMiddleware(themeHandler, *users)
+			themeHandler = robotsTagMiddleware(themeHandler, *robotsTag)
 			http.HandleFunc(themePath, themeHandler)
 		}
 
@@ -99,6 +113,7 @@ func main() {
 			DocExtension:  *extension,
 			DirIndex:      *index,
 			MarkdownTheme: themePath,
+			TypekitKitID:  *typekitKitID,
 			CodeTheme:     *codeTheme,
 		})
 		markdownHandlerFunc = headerMiddleware(markdownHandlerFunc)
@@ -108,9 +123,10 @@ func main() {
 
 		// Start HTTP server
 		addr := fmt.Sprintf("%s:%d", *host, *port)
+		log.Printf("Starting server on %s", addr)
 		err := http.ListenAndServe(addr, nil)
 		if err != nil {
-			fmt.Fprint(os.Stderr, "Error starting server (%s).", err)
+			log.Printf("Error starting server: %s", err)
 			cli.Exit(1)
 		}
 

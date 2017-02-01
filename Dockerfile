@@ -1,12 +1,9 @@
-FROM gliderlabs/alpine
+FROM scratch
 MAINTAINER Kevin Stock <kevinstock@tantalic.com>
 
-RUN mkdir /app
-RUN mkdir /app/content
+WORKDIR /content
+VOLUME /content
 
-ADD ./servemd /app
-RUN chmod a+x /app/servemd
-
-WORKDIR /app/content
-ENTRYPOINT /app/servemd
+ADD ./build/servemd-linux_amd64 /servemd
 EXPOSE 3000
+CMD ["/servemd"]
