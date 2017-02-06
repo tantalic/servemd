@@ -28,6 +28,7 @@ const (
 		blackfriday.EXTENSION_STRIKETHROUGH |
 		blackfriday.EXTENSION_SPACE_HEADERS |
 		blackfriday.EXTENSION_HEADER_IDS |
+		blackfriday.EXTENSION_AUTO_HEADER_IDS |
 		blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
 		blackfriday.EXTENSION_DEFINITION_LISTS
 )
