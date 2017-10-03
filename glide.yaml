@@ -1,7 +1,0 @@
-package: tantalic.com/servemd
-import:
-- package: github.com/elazarl/go-bindata-assetfs
-- package: github.com/ericaro/frontmatter
-- package: github.com/jawher/mow.cli
-- package: github.com/russross/blackfriday
-  version: ^1.4.0
