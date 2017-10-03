@@ -27,9 +27,9 @@ osx: bindata-assetfs
 
 linux: bindata-assetfs
 	docker run --env GOOS=linux --env GOARCH=amd64 --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_amd64
-	docker run --env GOOS=linux --env GOARCH=amd64 --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_386
-	docker run --env GOOS=linux --env GOARCH=amd64 --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_arm
-	docker run --env GOOS=linux --env GOARCH=amd64 --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_arm64	
+	docker run --env GOOS=linux --env GOARCH=386   --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_386
+	docker run --env GOOS=linux --env GOARCH=arm   --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_arm
+	docker run --env GOOS=linux --env GOARCH=arm64 --env CGO_ENABLED=0 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -a -tags netgo -ldflags '-w' -o build/servemd-linux_arm64	
 
 freebsd: bindata-assetfs
 	docker run --env GOOS=freebsd --env GOARCH=amd64 --rm -v "${PWD}":/go/src/$(PKG) -w /go/src/$(PKG) golang:$(GOVERSION) go build -o build/servemd-freebsd_amd64
