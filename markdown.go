@@ -12,6 +12,27 @@ import (
 	"github.com/russross/blackfriday"
 )
 
+const (
+	htmlFlags = 0 |
+		blackfriday.HTML_USE_XHTML |
+		blackfriday.HTML_USE_SMARTYPANTS |
+		blackfriday.HTML_SMARTYPANTS_FRACTIONS |
+		blackfriday.HTML_SMARTYPANTS_DASHES |
+		blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
+
+	markdownExtensions = 0 |
+		blackfriday.EXTENSION_NO_INTRA_EMPHASIS |
+		blackfriday.EXTENSION_TABLES |
+		blackfriday.EXTENSION_FENCED_CODE |
+		blackfriday.EXTENSION_AUTOLINK |
+		blackfriday.EXTENSION_STRIKETHROUGH |
+		blackfriday.EXTENSION_SPACE_HEADERS |
+		blackfriday.EXTENSION_HEADER_IDS |
+		blackfriday.EXTENSION_AUTO_HEADER_IDS |
+		blackfriday.EXTENSION_BACKSLASH_LINE_BREAK |
+		blackfriday.EXTENSION_DEFINITION_LISTS
+)
+
 type Document struct {
 	Title         string `fm:"title"`
 	Content       string `fm:"content"`
@@ -90,8 +111,16 @@ func serveMarkdown(w http.ResponseWriter, r *http.Request, path string, opts Mar
 		fmt.Fprintf(os.Stderr, "Error unmarshalling frontmatter (%s).\n", err)
 	}
 
-	doc.Content = string(blackfriday.MarkdownCommon([]byte(doc.Content)))
+	doc.Content = parseMarkdown(doc.Content)
 	serveDocument(w, r, doc)
+}
+
+func parseMarkdown(input string) string {
+	// set up the HTML renderer
+	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
+	outputBytes := blackfriday.MarkdownOptions([]byte(input), renderer, blackfriday.Options{
+		Extensions: markdownExtensions})
+	return string(outputBytes)
 }
 
 func serveDocument(w http.ResponseWriter, r *http.Request, doc Document) {
