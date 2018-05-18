@@ -1,5 +1,5 @@
 VERSION := $(shell git describe --always --dirty)
-GOVERSION := 1.9.1
+GOVERSION := 1.10.2
 PKG := "toolhouse.com/projects-site"
 
 .PHONY: help
